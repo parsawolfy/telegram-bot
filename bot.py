@@ -1,6 +1,27 @@
+import os
+from threading import Thread
+from flask import Flask
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from supabase import create_client, Client
+
+# ----------------------------------------------------
+# 1. تنظیم وب‌سرور Flask برای فعال نگه‌داشتن پورت در Render (جلوگیری از خطای Timeout)
+# ----------------------------------------------------
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running successfully and live!"
+
+def run_flask():
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
+
+def keep_alive():
+    t = Thread(target=run_flask)
+    t.daemon = True
+    t.start()
 
 # ----------------------------------------------------
 # تنظیمات اختصاصی ربات، کانال و دیتابیس Supabase
@@ -68,7 +89,7 @@ def check_channel_member(user_id):
 # دکمه‌های شیشه‌ای جوین اجباری
 def get_join_keyboard():
     markup = InlineKeyboardMarkup(row_width=1)
-    btn_channel = InlineKeyboardButton("📢عضویت در کانال", url=f"https://t.me/{CHANNEL_USERNAME.replace('@', '')}")
+    btn_channel = InlineKeyboardButton("📢 عضویت در کانال", url=f"https://t.me/{CHANNEL_USERNAME.replace('@', '')}")
     btn_check = InlineKeyboardButton("✅ عضو شدم", callback_data="check_join")
     markup.add(btn_channel, btn_check)
     return markup
@@ -312,12 +333,16 @@ def handle_messages(message):
                     post["audio_id"],
                     caption=audio_caption,
                     reply_markup=get_file_buttons(code, likes_count)
-                )
+                ) 
 
             else:
                 bot.edit_message_text(get_text("not_found_text"), chat_id=message.chat.id, message_id=searching_msg.message_id)
         except Exception as e:
             bot.edit_message_text(f"❌ خطا: <code>{e}</code>", chat_id=message.chat.id, message_id=searching_msg.message_id)
 
-print("🤖 ربات جدید روشن شد...")
-bot.polling(none_stop=True, interval=0)
+if __name__ == "__main__":
+    # روشن کردن سرور وب در پس‌زمینه برای رندر
+    keep_alive()
+    print("🤖 ربات و وب‌سرور داخلی روشن شدند...")
+    # شروع پولینگ ربات
+    bot.polling(none_stop=True, interval=0)

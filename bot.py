@@ -26,11 +26,11 @@ def keep_alive():
 # ----------------------------------------------------
 # تنظیمات اختصاصی ربات، کانال و دیتابیس Supabase
 # ----------------------------------------------------
-TOKEN = "8310861690:AAH0_9qwNItT9WEmAFC0QNe7CFJPNw_VWcY"
+TOKEN = "9097671626:AAGAChTkueWdX3FW1bpsiGo2x5jiiiK-JJ0"
 ADMIN_ID = 5995862782
 
 # تنظیمات کانال جدید
-CHANNEL_USERNAME = "@bot_Sazy"
+
 
 SUPABASE_URL = "https://badmbeumihdpjywddkli.supabase.co"
 SUPABASE_KEY = "sb_publishable_lMDNtw6RhPcviwWxdLMjcw_UzNeQ8GF"
@@ -73,26 +73,6 @@ def set_text_in_db(key, value):
         print(f"Error saving text {key}: {e}")
         return False
 
-# ----------------------------------------------------
-# بررسی عضویت کاربر در کانال عمومی
-# ----------------------------------------------------
-def check_channel_member(user_id):
-    try:
-        member = bot.get_chat_member(CHANNEL_USERNAME, user_id)
-        if member.status in ['creator', 'administrator', 'member']:
-            return True
-        return False
-    except Exception as e:
-        print(f"Error checking membership: {e}")
-        return True
-
-# دکمه‌های شیشه‌ای جوین اجباری
-def get_join_keyboard():
-    markup = InlineKeyboardMarkup(row_width=1)
-    btn_channel = InlineKeyboardButton("📢 عضویت در کانال", url=f"https://t.me/{CHANNEL_USERNAME.replace('@', '')}")
-    btn_check = InlineKeyboardButton("✅ عضو شدم", callback_data="check_join")
-    markup.add(btn_channel, btn_check)
-    return markup
 
 # دکمه‌های شیشه‌ای زیر موزیک (لایک + اشتراک‌گذاری)
 def get_file_buttons(code, likes_count):

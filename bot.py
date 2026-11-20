@@ -270,6 +270,11 @@ def handle_music_actions(call: types.CallbackQuery):
 
         toast_text = "❤️ لایک شما ثبت شد!" if liked_now else "💔 لایک شما برداشته شد."
         bot.answer_callback_query(call.id, toast_text)
+        create table if not exists public.likes (
+    code text not null,
+    user_id bigint not null,
+    primary key (code, user_id)
+);
 
     elif call.data.startswith("share:"):
         code_str = call.data.split(":", 1)[1].strip()
